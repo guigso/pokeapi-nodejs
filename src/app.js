@@ -11,6 +11,7 @@ class App {
 
   middlewares() {
     this.server.use(express.json());
+    this.server.use(express.static('public'));
   }
 
   routes() {

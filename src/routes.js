@@ -2,6 +2,7 @@ import { Router } from 'express';
 import api from './services/api';
 
 const routes = new Router();
+var random = -1;
 const base_img_url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
 function getDetails(detailObj) {
   var filtered = {};
@@ -14,21 +15,45 @@ function getDetails(detailObj) {
 
   return filtered;
 }
-routes.get('/:id', async (req, res) => {
-  var response = await api.get(`/generation/${req.params.id}`);
 
-  var pokemons = [];
-  response.data.pokemon_species.forEach(ele => {
-    pokemons.push({
-      id: ele.url.split('/').slice(6)[0],
-      name: ele.name,
-      sprite: base_img_url + ele.url.split('/').slice(6)[0] + '.png'
+function getRandomNumber() {
+  var newRandom = -1;
+  do {
+    newRandom = Math.floor(Math.random() * 16) + 1;
+  } while (newRandom === random);
+
+  return newRandom;
+}
+
+routes.get('/', (req, res) => {
+  return res.json({ message: 'Use GET /generation/:id or GET /details/:pokemon_id' });
+});
+
+routes.get('/generation/:id', async (req, res) => {
+  try {
+    var response = await api.get(`/generation/${req.params.id}`);
+
+    var pokemons = [];
+    response.data.pokemon_species.forEach(ele => {
+      pokemons.push({
+        id: ele.url.split('/').slice(6)[0],
+        name: ele.name,
+        sprite: base_img_url + ele.url.split('/').slice(6)[0] + '.png'
+      });
     });
-  });
 
-  pokemons.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+    pokemons.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-  return res.json(pokemons);
+    var random = getRandomNumber();
+
+    return res.json({
+      pokemons,
+      background: (process.env.PUBLIC_URL || 'http://localhost:3000') + `/background-${random}.png`,
+      header: (process.env.PUBLIC_URL || 'http://localhost:3000') + `/header-${random}.png`
+    });
+  } catch (err) {
+    return res.json({ error: err });
+  }
 });
 
 routes.get('/details/:id', async (req, res) => {
@@ -81,7 +106,6 @@ routes.get('/details/:id', async (req, res) => {
       pokemon
     });
   } catch (err) {
-    console.log(err);
     return res.json({ error: err });
   }
 });
