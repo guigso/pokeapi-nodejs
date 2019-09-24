@@ -27,34 +27,29 @@ class PokemonController {
         var evoChain = [];
         var evoData = evoResponse.data.chain;
         var evo_chain_level = 0;
+        evoChain.push({
+          name: evoData.species.name,
+          id: evoData.species.url.split('/')[6],
+          sprite: base_img_url + evoData.species.url.split('/')[6] + '.png',
+          evo_chain_level
+        });
+
         do {
           evo_chain_level++;
-          let numberOfEvolutions = evoData['evolves_to'].length;
           var details = evoData['evolution_details'][0]
             ? pokeController.getDetails(evoData['evolution_details'][0])
             : details;
 
-          evoChain.push({
-            name: evoData.species.name,
-            id: evoData.species.url.split('/')[6],
-            sprite: base_img_url + evoData.species.url.split('/')[6] + '.png',
-            details,
-            evo_chain_level
+          evoData['evolves_to'].forEach((ele, index) => {
+            var details = pokeController.getDetails(evoData.evolves_to[index].evolution_details[0]);
+            evoChain.push({
+              name: ele.species.name,
+              id: ele.species.url.split('/')[6],
+              sprite: base_img_url + ele.species.url.split('/')[6] + '.png',
+              details,
+              evo_chain_level
+            });
           });
-
-          if (numberOfEvolutions > 1) {
-            for (let i = 1; i < numberOfEvolutions; i++) {
-              evoChain.push({
-                name: evoData.evolves_to[i].species.name,
-                id: evoData.evolves_to[i].species.url.split('/')[6],
-                sprite: base_img_url + evoData.species.url.split('/')[6] + '.png',
-                evolution_details: pokeController.getDetails(
-                  evoData.evolves_to[i].evolution_details[0]
-                ),
-                evo_chain_level
-              });
-            }
-          }
           evoData = evoData['evolves_to'][0];
         } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
         var evolutionChain = evoChain;
