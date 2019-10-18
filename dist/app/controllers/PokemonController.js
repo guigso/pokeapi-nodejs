@@ -1,4 +1,4 @@
-import api from '../services/api';
+"use strict"; function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }Object.defineProperty(exports, "__esModule", {value: true});var _api = require('../services/api'); var _api2 = _interopRequireDefault(_api);
 
 class PokemonController {
   constructor() {
@@ -19,11 +19,11 @@ class PokemonController {
     try {
       const { id } = req.params;
       var base_img_url = process.env.SPRITE_BASE_URL;
-      const response = await api.get(`/pokemon/${id}`);
-      const specieResponse = await api.get(`/pokemon-species/${id}`);
+      const response = await _api2.default.get(`/pokemon/${id}`);
+      const specieResponse = await _api2.default.get(`/pokemon-species/${id}`);
       var pokeController = new PokemonController();
       if (specieResponse.data.evolution_chain.url) {
-        const evoResponse = await api.get(specieResponse.data.evolution_chain.url);
+        const evoResponse = await _api2.default.get(specieResponse.data.evolution_chain.url);
         var evoChain = [];
         var evoData = evoResponse.data.chain;
         do {
@@ -64,4 +64,4 @@ class PokemonController {
   }
 }
 
-export default new PokemonController();
+exports. default = new PokemonController();

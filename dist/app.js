@@ -1,4 +1,7 @@
-"use strict"; function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }Object.defineProperty(exports, "__esModule", {value: true});var _express = require('express'); var _express2 = _interopRequireDefault(_express);
+"use strict"; function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }Object.defineProperty(exports, "__esModule", {value: true});require('dotenv/config');
+
+var _express = require('express'); var _express2 = _interopRequireDefault(_express);
+var _cors = require('cors'); var _cors2 = _interopRequireDefault(_cors);
 var _routes = require('./routes'); var _routes2 = _interopRequireDefault(_routes);
 
 class App {
@@ -12,6 +15,7 @@ class App {
   middlewares() {
     this.server.use(_express2.default.json());
     this.server.use(_express2.default.static('public'));
+    this.server.use(_cors2.default.call(void 0, ));
   }
 
   routes() {
