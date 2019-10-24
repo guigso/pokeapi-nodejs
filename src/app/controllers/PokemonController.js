@@ -44,7 +44,9 @@ class PokemonController {
           });
           evoData = evoData['evolves_to'][0];
         } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
-        var evolutionChain = evoChain;
+        var evolutionChain = evoChain.filter(
+          evolution => Object.keys(evolution.evolves_to.details).length > 2
+        );
       }
       var pokemon = {
         id: response.data.id,
